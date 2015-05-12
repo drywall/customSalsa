@@ -1,0 +1,1 @@
+jQ(document).ready(function(a){customSalsa.addBodyClass(),a(document).on("actionloaded",function(){customSalsa.placeholderLabels()}),customSalsa.watchAJAX()});
