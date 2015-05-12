@@ -33,16 +33,16 @@ var customSalsa = {
 		placeholderLabelSpeed: 100,
 		placeholderHideSelectLabels: true,
 		mobilizeConversions: {
-	    Email:          'email',
-	    In_Honor_Email: 'email',
-	    Zip:            'number',
-	    cc:             'number',
-	    Employer_Zip:   'number',
-	    Phone:          'tel',
-	    Work_Phone:     'tel',
-	    Cell_Phone:     'tel',
-	    otheramt:       'number'
-	  },
+			Email:          'email',
+			In_Honor_Email: 'email',
+			Zip:            'number',
+			cc:             'number',
+			Employer_Zip:   'number',
+			Phone:          'tel',
+			Work_Phone:     'tel',
+			Cell_Phone:     'tel',
+			otheramt:       'number'
+		},
 		mobilizeBreak: 500,
 		allowCanadianPostalCodes: false,
 		regex: {
@@ -298,13 +298,13 @@ var customSalsa = {
 	 * Misc CSS helper classes and such
 	 */
 	addCSSHelpers : function() {
-	  jQ("#CVV2").parents('.formRow').addClass('cvv-field');
-	  jQ("#ccExpMonth").parents('.formRow').addClass('expires-field');
+		jQ("#CVV2").parents('.formRow').addClass('cvv-field');
+		jQ("#ccExpMonth").parents('.formRow').addClass('expires-field');
 
-	  //smarter markup for required fields (maybe make smarter by using input name=required value?)
-	  $("span.required").parent('label').next('input, select').attr('required','required');
+		//smarter markup for required fields (maybe make smarter by using input name=required value?)
+		$("span.required").parent('label').next('input, select').attr('required','required');
 
-	  customSalsa.status.addCSSHelpers = true;
+		customSalsa.status.addCSSHelpers = true;
 	}, // END addCSSHelpers
 
 	/**
@@ -859,29 +859,29 @@ var customSalsa = {
 
 				entry: function() {
 
-				  // Reassign fields to HTML5 counterparts, if they exist
-				  jQ.each( config, function( inputName, inputType ) {
-				    var $elem = jQ("input[name='" + inputName + "']");
+					// Reassign fields to HTML5 counterparts, if they exist
+					jQ.each( config, function( inputName, inputType ) {
+						var $elem = jQ("input[name='" + inputName + "']");
 
-				    if ( $elem.length && $elem.attr('id') ) {
-				      var the_id = $elem.attr('id');
-				      $elem.data( 'original-type', document.getElementById(the_id).type );
-				      document.getElementById(the_id).type = inputType;	// can't do this via jQ... security issues?
-				    }
-				  });
+						if ( $elem.length && $elem.attr('id') ) {
+							var the_id = $elem.attr('id');
+							$elem.data( 'original-type', document.getElementById(the_id).type );
+							document.getElementById(the_id).type = inputType;	// can't do this via jQ... security issues?
+						}
+					});
 
 				},
 
 				exit: function() {
 					// Assign fields back to clunky Salsa defaults
-				  jQ.each( config.conversions, function( inputName, inputType ) {
-				    var $elem = jQ("input[name='" + inputName + "']");
+					jQ.each( config.conversions, function( inputName, inputType ) {
+						var $elem = jQ("input[name='" + inputName + "']");
 
-				    if ( $elem.length && $elem.attr('id') && $elem.data('original-type') ) {
-				      var the_id = $elem.attr('id');
-				      document.getElementById(the_id).type = $elem.data('original-type');
-				    }
-				  });
+						if ( $elem.length && $elem.attr('id') && $elem.data('original-type') ) {
+							var the_id = $elem.attr('id');
+							document.getElementById(the_id).type = $elem.data('original-type');
+						}
+					});
 
 				}
 			});
