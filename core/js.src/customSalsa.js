@@ -5,6 +5,9 @@
  */
 var customSalsa = {
 
+	/**
+	 * various config options, overridable
+	 */
 	settings : {
 		ajaxDelay: 50,
 		ajaxDefaultEvent: 'salsaajax',
@@ -30,15 +33,15 @@ var customSalsa = {
 		placeholderLabelSpeed: 100,
 		placeholderHideSelectLabels: true,
 		mobilizeConversions: {
-	    Email: 'email',
+	    Email:          'email',
 	    In_Honor_Email: 'email',
-	    Zip: 'number',
-	    cc: 'number',
-	    Employer_Zip: 'number',
-	    Phone: 'tel',
-	    Work_Phone: 'tel',
-	    Cell_Phone: 'tel',
-	    otheramt: 'number'
+	    Zip:            'number',
+	    cc:             'number',
+	    Employer_Zip:   'number',
+	    Phone:          'tel',
+	    Work_Phone:     'tel',
+	    Cell_Phone:     'tel',
+	    otheramt:       'number'
 	  },
 		mobilizeBreak: 500,
 		allowCanadianPostalCodes: false,
@@ -49,7 +52,41 @@ var customSalsa = {
 			integer: /^\d+$/,
 			decimal: /^\d+\.?\d*$/
 		},
-		banana: "ripe"
+		lightboxDefaults: {
+			headline:           'Want your gift to have even more impact?',
+			intro:              '<p>Join our monthly giving program - and help us fight month by month for a better world.</p>',
+			yes:                'YES!',
+			yestext:            "I'll give a monthy donation of $[amount] instead",
+			formula:            'Math.ceil(amount / 5)',
+			no:                 'NO, THANKS',
+			notext:             "Process my one-time gift of $[amount]",
+			bg:                 "",
+			recurring_redirect: "",
+			validate:           false,
+			max:                500,
+			tracking:           true // google analytics event tracking
+		},
+		donationFormFields: {
+			'input[name="First_Name"]'  : "Please enter your first name",
+			'input[name="Last_Name"]'   : "Please enter your last name",
+			'input[name="Street"]'      : "Please enter your street",
+			'input[name="City"]'        : "Please enter your street",
+			'select[name="State"]'      : "Please select your state",
+			'input[name="Zip"]'         : "Please enter your Zip Code",
+			'input[name="Email"]'       : "Please enter your email address",
+			'input[name="cc"]'          : "Please enter a valid credit card number",
+			'select[name="ccExpMonth"]' : "Please choose an expiration month",
+			'select[name="ccExpYear"]'  : "Please choose an expiration year",
+			'input[name="CVV2"]'        : "Please enter a valid card security code"
+		}
+	},
+
+	/**
+	 * We log method calls here so that various methods can know if other things have been run
+	 */
+	status : {
+		initJQ : false,
+		addBodyClass : false
 	},
 
 	/**
@@ -63,6 +100,8 @@ var customSalsa = {
 		// alias it and give it back
 		document.write('<scr' + 'ipt>window.jQ = jQuery.noConflict( true );</scr' + 'ipt>');
 
+		customSalsa.status.initJQ = true;
+
 	}, // END initJQ
 
 
@@ -75,13 +114,13 @@ var customSalsa = {
 
 		jQ(document).ajaxSuccess( function( event, xhr, settings ) {
 
-			if ( settings.url.indexOf('actionJSON.sjs') !=  -1 ) {
+			if ( settings.url.indexOf('actionJSON.sjs') !==  -1 ) {
 				actionName = 'actionloaded';
-			} else if ( settings.url.indexOf('targetJSON.sjs') !=  -1 ) {
+			} else if ( settings.url.indexOf('targetJSON.sjs') !==  -1 ) {
 				actionName = 'targetsloaded';
-			} else if ( settings.url.indexOf('processAction2.jsp') != -1 ) {
+			} else if ( settings.url.indexOf('processAction2.jsp') !== -1 ) {
 				actionName = 'actionprocessed';
-			} else if ( settings.url.indexOf('blind_submit.sjs') != -1 ) {
+			} else if ( settings.url.indexOf('blind_submit.sjs') !== -1 ) {
 				actionName = 'actionsubmitted blindactionsubmitted';
 			}
 			// trigger the action
@@ -117,7 +156,7 @@ var customSalsa = {
 		});
 
 		// if we're on an action page, let's try to figure out the action type
-		if ( addedClass == 'action' ) {
+		if ( 'action' === addedClass ) {
 			// blind targeted actions have a different form action
 			$form = jQ('form[onsubmit]');
 			if ( $form.length && $form.attr('action').indexOf('blind_submit') > 1 ) {
@@ -138,7 +177,7 @@ var customSalsa = {
 			else {
 				jQ(document).ajaxSuccess(function(event,xhr,settings) {
 					// need to listen to the call that fetches the ajax
-					if ( settings.url.indexOf('actionJSON.sjs') !=  -1 ) {
+					if ( settings.url.indexOf('actionJSON.sjs') !==  -1 ) {
 						// let's look for "Style":"Targeted","Petition" or "Multi-Content"
 						if ( xhr.response.indexOf('"Style":"Targeted"') > 1 ) {
 							jQ('body').addClass('action-targeted');
@@ -153,6 +192,9 @@ var customSalsa = {
 				});
 			}
 		} // end action special cases
+
+		customSalsa.status.addBodyClass = true;
+
 	}, // END addBodyClass()
 
 
@@ -261,6 +303,8 @@ var customSalsa = {
 
 	  //smarter markup for required fields (maybe make smarter by using input name=required value?)
 	  $("span.required").parent('label').next('input, select').attr('required','required');
+
+	  customSalsa.status.addCSSHelpers = true;
 	}, // END addCSSHelpers
 
 	/**
@@ -269,7 +313,7 @@ var customSalsa = {
 	addMissingInputTypes : function( $elements ) {
 
 		if ( !arguments.length ) {
-			var $elements = jQ('input[id]').not('[type]');
+			$elements = jQ('input[id]').not('[type]');
 		}
 
 		jQ.each( $elements, function(index, $element) {
@@ -330,11 +374,11 @@ var customSalsa = {
 		if ( ! value || 0 === value.length ) return false;
 
 		// done with emptiness tests. If that's all, we're done here
-		if ( 'empty' == type ) return true;
+		if ( 'empty' === type ) return true;
 
 		// validate zipcodes. allow 5-digit, zip+4
 		// @todo : Canadian postal codes? Check against this.allowCanadianPostalCodes
-		if ( 'zip' == type ) {
+		if ( 'zip' === type ) {
 			var isValidZip =  this.settings.regex.zip.test( value );
 
 			if ( isValidZip ) return true;
@@ -347,17 +391,17 @@ var customSalsa = {
 		}
 
 		// validate email
-		if ( 'email' == type ) {
+		if ( 'email' === type ) {
 			return this.settings.regex.email.test( value );
 		}
 
 		// validate numeric
-		if ( 'integer' == type ) {
+		if ( 'integer' === type ) {
 			return this.settings.regex.integer.test( value );
 		}
 
 		// validate numeric
-		if ( 'decimal' == type ) {
+		if ( 'decimal' === type ) {
 			return this.settings.regex.decimal.test( value );
 		}
 
@@ -370,8 +414,6 @@ var customSalsa = {
 	 * ACTION-SPECIFIC STUFF
 	 */
 	advocacy : {
-
-		main : function() { return this; },
 
 		// Validates all required fields in an action.
 		// Typically attached to an event listener such as submit to initiate validation
@@ -407,6 +449,9 @@ var customSalsa = {
 
 		}, // END validateSupporterFields
 
+		/**
+		 * Gets fields required by advocacy form
+		 */
 		getRequiredFields : function() {
 
 			var requiredFields = [];
@@ -419,7 +464,7 @@ var customSalsa = {
 			// manually check just to be sure
 			jQ('.required').each( function() {
 				var $requiredInput = jQ(this).closest('.formRow').find('input, select');
-				if ( jQ.inArray( $requiredInput, requiredFields ) == -1 ) {
+				if ( jQ.inArray( $requiredInput, requiredFields ) === -1 ) {
 					requiredFields.push( $requiredInput );
 				}
 			});
@@ -427,11 +472,11 @@ var customSalsa = {
 			return requiredFields;
 		}, // END validateSupporterFields
 
-	},
+	}, // END advocacy
 
 
 	/**
-	 * DONATION-SPECIFIC STUFF.... TBD later
+	 * DONATION-SPECIFIC STUFF
 	 */
 	donation : {
 
@@ -447,9 +492,10 @@ var customSalsa = {
 					'amex' : /^3[47]\d{13}$/,
 					'disc' : /^6(?:011\d\d|5\d{4}|4[4-9]\d{3}|22(?:1(?:2[6-9]|[3-9]\d)|[2-8]\d\d|9(?:[01]\d|2[0-5])))\d{10}$/
 				},
-				returnVal = false,
-				ccNum = typeof ccNum !== 'string' ? ccNum : jQ('#cc_number').val(),
-				setElement = typeof setElement !== 'string' ? setElement : '#cc_type';
+				returnVal = false;
+
+			ccNum = typeof ccNum !== 'string' ? ccNum : jQ('#cc_number').val();
+			setElement = typeof setElement !== 'string' ? setElement : '#cc_type';
 
 			jQ.each( tests, function( key, value ) {
 				if ( ccNum.match( value ) !== null ) {
@@ -513,7 +559,8 @@ var customSalsa = {
 
 			// still here? That's not good.
 			return false;
-		},
+
+		}, // END isValidABA
 
 		/**
 		 * Does a Luhn check but also tests for validity against defined card type and CVV
@@ -542,6 +589,7 @@ var customSalsa = {
 					ccTest = /^6(?:011\d\d|5\d{4}|4[4-9]\d{3}|22(?:1(?:2[6-9]|[3-9]\d)|[2-8]\d\d|9(?:[01]\d|2[0-5])))\d{10}$/;
 					break;
 				case "amex":
+				case "american express":
 					ccTest = /^3[47]\d{13}$/;
 					cvvTest = /^\d{4}$/;
 					break;
@@ -564,8 +612,228 @@ var customSalsa = {
 				});
 			}
 
-		}
+			return returnObj;
 
+			// @todo: evaluate expiration. It should be in the future!
+
+		}, // END donation.isValidCC
+
+		lightbox : {
+
+			/**
+			 * Implements a lightbox requesting recurring donations
+			 * MAKE SURE YOU HAVE CSS IN PLACE!
+			 */
+			init : function( config ) {
+
+				var lightbox = customSalsa.settings.lightboxDefaults;
+
+				// load config
+				if ( arguments.length && 'object' === typeof config ) {
+					jQ.extend( lightbox, config );
+				}
+
+				//create the lightbox mask
+				jQ('body').addClass('not-ready').append('<div id="lightbox-mask" />');
+
+				//create the lightbox
+				$lightbox = $('<div id="lightbox-box" />');
+				$lightbox
+					.append('<a href="#" class="close">X</a>')
+					.append('<h2>' + lightbox.headline + '</h2>')
+					.append('<div class="lightbox-intro">' + lightbox.intro + '</div>')
+					.append('<button class="yes" id="lightbox-yes">' + lightbox.yes + '<span></span></button>')
+					.append('<button class="no" id="lightbox-no">' + lightbox.no + '<span></span></button>')
+					.appendTo('body')
+					.css('background', lightbox.bg);
+
+				//set a background for the lightbox element, if specified
+				if ( lightbox.bg !== "" ) $lightbox.css('background', lightbox.bg);
+
+				// store the 'recurring redirect' value in the body to facilitate global retrieval
+				jQ('body').data('recurring_redirect', lightbox.recurring_redirect);
+
+				//create the tracker
+				this.updateTracking('start', lightbox.tracking );
+
+				//attach behaviors to the buttons we just instantiated
+				//first: no button
+				jQ('#lightbox-no').click(function() {
+					jQ('body').removeClass('not-ready');
+					// change tracking code
+					this.updateTracking('no', lightbox.tracking );
+					jQ('form[name="subform"]').submit();
+				});
+				// behaviors for the yes button
+				jQ('#lightbox-yes').click(function() {
+					//make recurring
+					jQ('input[name="recurring"][value="1"]').prop('checked', true);
+					//change amount to 'other'
+					jQ('input#otheramount').prop('checked', true);
+					//enter 'other' value
+					jQ('input[name="amountOther"]').val( monthly );
+					// set period, just in case it changed
+					jQ('#donation_pay_periods').val('MONT');
+					//remove blocker class
+					jQ('body').removeClass('not-ready');
+					//change tracking code
+					this.updateTracking('yes', lightbox.tracking );
+					//submit the form
+					jQ('form[name="subform"]').submit();
+				});
+				// behaviors for close button
+				jQ('#lightbox-box .close').click( function() {
+					jQ('#lightbox-mask, #lightbox-box').fadeOut('fast');
+					jQ('body').removeClass('not-ready').addClass('lb-closed');
+					return false;
+				});
+
+				//attach intercepts to the initial form to trigger lightbox (and optionally validate)
+				jQ('.not-ready form[name="subform"]').on('submit', function() {
+
+					//selector may return a false positive as this was attached while class existed
+					if ( !jQ('body').hasClass('not-ready') ) {
+						if ( jQ('body').hasClass('lb-closed') ) this.updateTracking( 'closed' );
+						return true;
+					}
+
+					//validate
+					if ( lightbox.validate && !customSalsa.donation.validateForm() ) return false;
+
+					//check if recurring. if so, submit away!
+					if ( jQ('input[name="recurring"]:checked').val() === 1 ) {
+						this.updateTracking( 'initial-recur', lightbox.tracking  );
+						return true;
+					}
+
+					//check if the gift is large
+					if ( jQ('input[name="amount"]:checked').val() >= lightbox.max || ( jQ('#otheramount:checked').length && jQ('input[name="amountOther"]').val() >= lightbox.max) ) {
+						this.updateTracking( 'large', lightbox.tracking  );
+						return true;
+					}
+
+					//if not recurring, populate lightbox content
+					amount  = 0;
+					monthly = 0;
+					if ( jQ('#otheramount:checked').length ) {
+						amount = jQ('input[name="amountOther"]').val();
+					} else {
+						amount = jQ('input[name="amount"]:checked').val();
+					}
+
+					amount  = parseFloat(amount);	//just making sure
+					monthly = eval(lightbox.formula);
+					if ( monthly < 3 ) monthly = 2;	//hard-coded min, required by Salsa
+
+					$('#lightbox-yes span').html(lightbox.yestext.replace('[amount]', monthly));
+					$('#lightbox-no span').html(lightbox.notext.replace('[amount]', amount));
+
+					//open it. Very basic responsiveness
+					//@todo: wire up to mediaCheck
+					if ( jQ('#lightbox-box').outerHeight() + 150 < jQ(window).height() ) {
+						jQ('#lightbox-box').css('top', $(window).scrollTop() + 150);
+					} else {
+						jQ('#lightbox-box').css('top', $(window).scrollTop() + 15);
+					}
+					jQ('#lightbox-mask:hidden, #lightbox-box:hidden').fadeIn('fast');
+					//update tracking
+					this.updateTracking('open', lightbox.tracking );
+
+					return false;
+				}); // end not-ready onsubmit
+
+			}, // END lightbox.init
+
+			/**
+			 * Updating Donation_Tracking_Code as well as Google Analytics based on lightbox interactions
+			 */
+			updateTracking : function( event, doTracking ) {
+
+				//don't track if it's disabled or GAQ ain't a thing
+				if ( !do_tracking || "undefined" === typeof _gaq ) return false;
+
+				//add the tracking field if not already present
+				if ( jQ('#salsa-tracker').length === 0 ) {
+					jQ('<input type="hidden" name="Donation_Tracking_Code" value="recurring_lightbox_page" id="salsa-tracker" />').appendTo( jQ('form[name="subform"]') );
+				}
+
+				var $tracker = $('#salsa-tracker');
+
+				//update things based on our event
+				switch (event) {
+					case "start":         // initialization
+						$tracker.val( 'recurring_lightbox_present' );	//should never go into Salsa
+						break;
+					case "initial-recur": // end-user chose recurring before submission and never got the lightbox
+						$tracker.val( 'recurring_prechecked' );	//should never go into Salsa
+						if ( jQ('body').data('recurring_redirect') ) jQ('input[name="redirect"]').val( jQ('body').data('recurring_redirect') );
+						break;
+					case "open":          // lightbox was presented to the user
+						_gaq.push(['_trackEvent', 'Donations', 'Lightbox Open']);
+						$tracker.val( 'recurring_lightbox_open' );	//should never go into Salsa
+						break;
+					case "closed":        // user used lightbox 'close' button and then proceeded to submit form
+						_gaq.push(['_trackEvent', 'Donations', 'Lightbox Closed']);
+						$tracker.val( 'recurring_lightbox_closed' );	//will only go into Salsa if user closes lightbox and then submits
+						break;
+					case "large":         // user's gift amount excedded the lightbox max and thus no lightbox was triggered
+						_gaq.push(['_trackEvent', 'Donations', 'Lightbox Bypassed (Large Gift)']);
+						$tracker.val( 'recurring_lightbox_bypassed_large' );	//will only go into Salsa if user's initial gift is >=max
+						break;
+					case "yes":           // user was presented with the lightbox and agreed to give monthly
+						_gaq.push(['_trackEvent', 'Donations', 'Lightbox Yes']);
+						$tracker.val( 'recurring_lightbox_yes' ).attr('name', 'Note');
+						if ( jQ('body').data('recurring_redirect') ) jQ('input[name="redirect"]').val( jQ('body').data('recurring_redirect') );
+						break;
+					case "no":            // user was presented the lightbox but chose to give a one-time gift
+						_gaq.push(['_trackEvent', 'Donations', 'Lightbox No']);
+						$tracker.val( 'recurring_lightbox_no' );
+						break;
+				}
+
+			}, // END lightbox.updateTracking
+
+		}, // END donation.lightbox
+
+		/**
+		 * Validate a donation form
+		 * Only hits basic required fields by default
+		 * @todo: validate credit card expiry, validate checking account number
+		 */
+		validateForm : function( context ) {
+
+			context = typeof context !== 'object' ? jQ('form[name="subform"]') : context ;
+
+			var fields = customSalsa.settings.donationFormFields;
+
+			jQ.each( fields, function( selector, errMessage ) {
+
+				var $element = jQ(selector, context);
+				var validationType = customSalsa.getFieldValidationType( $element );
+				var isValid = customSalsa.validateField( $element, validationType );
+
+				if ( !isValid ) {
+					$element.filter(':visible').focus();
+					alert( errMessage );
+					wasValid = false;
+					return false;
+				}
+
+			});
+
+			if ( ! wasValid ) return false;
+
+			// validate credit card information
+			checkCC = this.isValidCC( jQ('input[name="cc"]', context).val(), jQ('input[name="CVV2"]', context).val(), $('input[name="cc_type"]:checked').val() );
+			if ( checkCC.isValid ) return true;
+			alert( checkCC.errors.message );
+			if ( jQ('input[name="CVV2"]', context).val() === checkCC.errors.value ) {
+				jQ('input[name="CVV2"]:visible', context).focus();
+			}	else {
+				jQ('input[name="cc"]:visible', context).focus();
+			}
+			return false;
+		}
 
 	}, // END donation
 
@@ -629,9 +897,9 @@ var customSalsa = {
 			customSalsa.addMissingInputTypes();
 			this.mobilizeInputTypes( breakpoint );
 			jQ('html').addClass('mobilized');
+
+			customSalsa.status.mobilizrInit = true;
 		}
-
-
 
 	}
 
