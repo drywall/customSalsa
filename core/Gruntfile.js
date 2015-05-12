@@ -30,7 +30,7 @@ module.exports = function (grunt) {
 				"force" : true
 			},
 			all		: [
-				'js.dev/*.js'
+				'js.src/*.js'
 			]
 		},
 
