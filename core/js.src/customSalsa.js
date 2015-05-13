@@ -86,7 +86,15 @@ var customSalsa = {
 	 */
 	status : {
 		initJQ : false,
-		addBodyClass : false
+		addBodyClass : false,
+		watchAJAX: false,
+		activeLabels: false,
+		placeholderLabels: false,
+		hideSelectLabels: false,
+		addCSSHelpers: false,
+		addMissingInputTypes: false,
+		lightboxInit: false,
+		mobilizrInit: false
 	},
 
 	/**
@@ -127,13 +135,15 @@ var customSalsa = {
 				actionName = 'targetwebformsubmitted';
 			}
 			// trigger the action
-			setTimeout( function() { jQ(document).trigger( actionName ) }, this.settings.ajaxDelay );
+			setTimeout( function() { jQ(document).trigger( actionName ) }, customSalsa.settings.ajaxDelay );
 		});
 
 		// If we have a blind action, there's no AJAX
 		if ( jQ("form[action*='blind_submit.sjs']").length ) {
 			setTimeout( function() { jQ(document).trigger('actionloaded'); }, customSalsa.settings.ajaxDelay );
 		}
+
+		customSalsa.status.watchAJAX = true;
 
 	},  // END watchAJAX
 
@@ -230,6 +240,8 @@ var customSalsa = {
 				jQ("label[for='" + this.id + "']" ).addClass('checked');
 			});
 		});
+
+		customSalsa.status.activeLabels = true;
 	}, // END activeLabels
 
 
@@ -282,6 +294,8 @@ var customSalsa = {
 		if ( this.settings.placeholderHideSelectLabels ) {
 			this.hideSelectLabels();
 		}
+
+		customSalsa.status.placeholderLabels = true;
 	}, // END placeholderLabelss
 
 
@@ -294,6 +308,7 @@ var customSalsa = {
 			$(this).closest('.formRow').find('label').addClass('hidden');
 		});
 
+		customSalsa.status.hideSelectLabels = true;
 	}, // END hideSelectLabels
 
 
@@ -301,6 +316,9 @@ var customSalsa = {
 	 * Misc CSS helper classes and such
 	 */
 	addCSSHelpers : function() {
+
+		if ( customSalsa.status.addCSSHelpers ) return;
+
 		jQ("#CVV2").parents('.formRow').addClass('cvv-field');
 		jQ("#ccExpMonth").parents('.formRow').addClass('expires-field');
 
@@ -315,6 +333,8 @@ var customSalsa = {
 	 */
 	addMissingInputTypes : function( $elements ) {
 
+		if ( customSalsa.status.addMissingInputTypes ) return;
+
 		if ( !arguments.length ) {
 			$elements = jQ('input[id]').not('[type]');
 		}
@@ -327,6 +347,7 @@ var customSalsa = {
 			document.getElementById( id ).type = 'text';
 		});
 
+		customSalsa.status.addMissingInputTypes = true;
 	},
 
 	/**
@@ -629,6 +650,8 @@ var customSalsa = {
 			 */
 			init : function( config ) {
 
+				if ( customSalsa.status.lightboxInit ) return;
+
 				var lightbox = customSalsa.settings.lightboxDefaults;
 
 				// load config
@@ -744,6 +767,8 @@ var customSalsa = {
 
 					return false;
 				}); // end not-ready onsubmit
+
+				customSalsa.status.lightboxInit = true;
 
 			}, // END lightbox.init
 
@@ -895,6 +920,9 @@ var customSalsa = {
 		 * Does all the mobilizr stuff
 		 */
 		init: function( breakpoint ) {
+
+			if ( customSalsa.status.mobilizrInit ) return;
+
 			// should do checks if already completed?
 			customSalsa.addCSSHelpers();
 			customSalsa.addMissingInputTypes();

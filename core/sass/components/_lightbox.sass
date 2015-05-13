@@ -1,0 +1,109 @@
+/**
+ * Basic layout for the lightbox
+ * Makes the lightbox around 640x400 wide (roughly) and responsive
+ * You probably needn't adjust these. Put overrides in custom.sass.
+ */
+
+body
+	position: relative
+
+#lightbox-mask
+	position: absolute
+	z-index: 9999
+	top: 0
+	left: 0
+	right: 0
+	bottom: 0
+	background-color: black
+	+opacity(0.6)
+	display: none
+
+#lightbox-box
+	position: absolute
+	z-index: 10000
+	top: 50%
+	left: 50%
+	width: 595px
+	height: 340px
+	border: 1px solid black
+	margin-left: -324px
+	padding: 25px
+	background: white
+	+box-shadow(0 10 30px rgba(black,0.2))
+	display: none
+	@media only screen and (max-width : 670px)
+		padding: 15px
+		width: 390px
+		background-image: none
+		margin-left: -211px
+		height: auto
+	@media only screen and (max-width : 450px)
+		padding: 10px
+		max-width: 90%
+		width: 280px
+		margin-left: -151px
+
+	.close
+		position: absolute
+		top: 14px
+		right: 14px
+		background-color: #bbb8b2
+		display: block
+		padding: 1px 4px 0
+		font: normal 16px Arial, sans-serif
+		color: white
+		+single-transition(all, 0.3s, ease)
+		&:hover
+			background-color: #616161
+			text-decoration: none
+
+	h2
+		width: 390px
+		margin: 15px 10px
+
+	.lightbox-intro
+		width: 390px
+		margin: 0 10px 20px
+		font-size: 16px
+		line-height: 1.2em
+
+	button
+		+inline-block
+		text-align: center
+		width: 285px
+		height: 90px
+		color: white
+		+text-shadow(2px 4px 2px rgba(black,0.32))
+		font-size: 24px
+		font-weight: bold
+		+border-radius(29px)
+		+background-clip(padding-box)
+		cursor: pointer
+		+single-transition(all, 0.3s, ease)
+		&:hover
+			+box-shadow(0 0 10px #ccc8bf)
+		&:active
+			position: relative
+			top: 2px
+		span
+			font-size: 14px
+			display: block
+			font-weight: normal
+		@media only screen and (max-width : 670px)
+			display: block
+			margin: 0 auto 15px !important
+
+	#lightbox-no
+		background-color: #434343
+		+background-image(linear-gradient(bottom, #434343 0%, #616161 100%))
+		margin-left: 20px
+
+@media only screen and (max-width : 450px)
+	#lightbox-box
+		button,
+		h2,
+		.lightbox-intro
+			width: 280px
+		h2,
+		.lightbox-intro
+			margin-left: 0

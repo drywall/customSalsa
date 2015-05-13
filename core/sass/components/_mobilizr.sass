@@ -1,0 +1,87 @@
+/**
+ * below desktop
+ */
+@media screen and ( max-width: 940px )
+
+  html.mobilized body > #salsa
+
+    // overall structure
+    display: block !important
+    width: 94%
+    padding: 0 3%
+    margin: 0 auto
+    max-width: 600px
+    min-width: 225px
+    font-size: 16px
+    line-height: 1.2em
+    overflow-x: hidden
+
+    // one column, please
+    // this is for donations
+    #left_container,
+    #right_container
+      float: none
+      width: 100%
+      max-width: 600px
+      margin: 0 auto
+      .formRow
+        margin: 0.8em 0 0.8em 0
+        padding: 0 0 0 0
+      input,
+      textarea,
+      select
+        +box-sizing(border-box !important)
+        width: 99% !important
+        &#ccExpMonth,
+        &#ccExpYear,
+        &#CVV2
+          +inline-block
+        &#ccExpMonth,
+        &#ccExpYear
+          width: 43% !important
+
+      input[type='radio'],
+      input[type='checkbox'],
+        width: auto !important
+
+      input#otheramt
+        +inline-block
+        width: 150px !important
+
+      legend
+        font-size: 100%
+        font-family: inherit
+
+      fieldset
+        width: 100%
+
+    #left_container
+      margin-top: 1em
+
+    //fix big images
+    #salsaDonationHeader,
+    #salsaDonationFooter
+      img
+        max-width: 90%
+        height: auto
+        display: block
+        margin: 0 auto
+        float: none
+
+    //submit button placement
+    #submit
+      width: 100%
+      text-align: center
+      display: block
+      #submitContribution
+        float: none
+        margin: 0 auto
+      p
+        font-size: 90%
+        text-align: center
+        font-style: italic
+
+    //salsa styles to override
+    label,
+    legend
+      font-size: 100%
