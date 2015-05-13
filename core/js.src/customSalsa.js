@@ -112,7 +112,8 @@ var customSalsa = {
 
 		var actionName = this.settings.ajaxDefaultEvent;
 
-		jQ(document).ajaxSuccess( function( event, xhr, settings ) {
+		// Note use of s$, salsa's own jQuery instance - it's what invokes the AJAX calls
+		s$(document).ajaxSuccess( function( event, xhr, settings ) {
 
 			if ( settings.url.indexOf('actionJSON.sjs') !==  -1 ) {
 				actionName = 'actionloaded';
@@ -122,14 +123,16 @@ var customSalsa = {
 				actionName = 'actionprocessed';
 			} else if ( settings.url.indexOf('blind_submit.sjs') !== -1 ) {
 				actionName = 'actionsubmitted blindactionsubmitted';
+			} else if ( settings.url.indexOf('processWebform.sjs') != -1 ) {
+				actionName = 'targetwebformsubmitted';
 			}
 			// trigger the action
-			setTimeout( jQ(document).trigger( actionName ), this.settings.ajaxDelay );
+			setTimeout( function() { jQ(document).trigger( actionName ) }, this.settings.ajaxDelay );
 		});
 
 		// If we have a blind action, there's no AJAX
 		if ( jQ("form[action*='blind_submit.sjs']").length ) {
-			jQ(document).trigger('actionloaded');
+			setTimeout( function() { jQ(document).trigger('actionloaded'); }, customSalsa.settings.ajaxDelay );
 		}
 
 	},  // END watchAJAX
