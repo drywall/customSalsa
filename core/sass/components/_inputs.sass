@@ -1,0 +1,44 @@
+#{$mainElement}
+	input[type='text'],
+	input[type='password'],
+	input[type='tel'],
+	input[type='email'],
+	input[type='number'],
+	input[name='Email'],
+	textarea,
+	input#tempPostalCodel,
+	.details > input,
+	select
+		font: 22px Helvetica, Arial, sans-serif
+		+box-sizing(border-box)
+		border: 2px solid #919aa1
+		+border-radius(8px)
+		width: 100%
+		padding: 10px
+		height: 50px
+		+single-transition(all, 0.2s, ease)
+		margin: 0 0 0 0
+		background-color: white
+		&:focus
+			outline: none
+			+box-shadow(0 0 10px #006ab1)
+
+	select
+		-webkit-appearance: button
+		padding-right: 20px
+		background:
+			image: url('https://org2.salsalabs.com/o/5674/images/select-controls.png')
+			position: 94% center
+			repeat: no-repeat
+		@media screen and (max-width: 450px)
+			background-position: 98% center
+
+.hidden
+	border: 0
+	clip: rect(0 0 0 0)
+	height: 1px
+	margin: -1px
+	overflow: hidden
+	padding: 0
+	position: absolute
+	width: 1px
