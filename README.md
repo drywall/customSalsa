@@ -1,26 +1,26 @@
-# customSalsa
+# customSalsa #
 
 CustomSalsa is a bundle of utilities for enhancing pages from Salsa Labs' Cosm product. It mostly consists of a large JavaScript object, called `customSalsa`, along with some basic CSS. 
 
 ### Use at your own risk ###
 
-This code is highly experimental at this point and not recommended for live sites. It's more of a public sandbox at the moment.
+This code is *highly experimental* at this point and not recommended for live sites. It's more of a public sandbox at the moment.
 
-### How would I use it? ###
+### How would you use it? ###
 
 If you're feeling brave, feel free to clone/fork and play around. You'll need an environment that supports Grunt and Compass in order to do much. 
 
-Use the `grunt` commands to compile CSS and minify JS as needed.
+Use the `grunt` commands (watch/css/js) to compile CSS and minify JS as needed.
 
-js.src/customSalsa.js is where the guts live. Basically, that file creates an singleton JS object `customSalsa` that in turn loads v1.11.2 of jQuery as the object `jQ` (rather than the more-familiar `$` or `jQuery`). This prevents collisions of problems with the ancient (1.3.2) version of jQuery that Salsa automatically loads.
+[js.src/customSalsa.js](js.src/customSalsa.js) is where the guts live. Basically, that file creates an singleton JS object `customSalsa` that in turn loads v1.11.2 of jQuery as the object `jQ` (rather than the more-familiar `$` or `jQuery`). This prevents collisions of problems with the ancient (1.3.2) version of jQuery that Salsa automatically loads.
 
-Once `customSalsa` is instantiated, use main.js to start invoking various methods that will do various and interesting things to your Salsa pages. 
+Once `customSalsa` is instantiated, use main.js to start invoking various methods that will do various and interesting things to your Salsa pages. See [main.js](main.js) for a very basic example.
 
-See [main.js](main.js) for a very basic example.
-
-So basically: include js.dist/library.js in your template, then edit and include js.dist/main.js as well. For styling, add your css/style.css to your template, too. 
+So basically: include [js.dist/library.js](js.dist/library.js) in your template, then edit to your own needs and include js.dist/main.js as well. For styling, add your own version of [css/style.css](css/style.css) to your template as well, compiling it from the sass files.
 
 ### Method & Property Inventory ###
+
+This is a rough overview of the methods and properties of the `customSalsa` object that is created.
 
 ##### settings #####
 
@@ -86,13 +86,13 @@ It's 2015. Users shouldn't have to manually identify their credit card type: If 
 
 ##### donation.isValidLuhn #####
 
-Private method that runs user-inputted credit card number through the Luhn checksum. Doesn't guarantee a number is valid, but helps suss out blatantly invalid ones.
+Private method that runs user-inputted credit card number through the [Luhn checksum](https://www.wikiwand.com/en/Luhn_algorithm). Doesn't guarantee a number is valid, but helps suss out blatantly invalid ones.
 
 ##### donation.isValidABA #####
 
-Like the above, but for bank routing numbers. 
+Like the above, but for bank routing numbers. Per [Brainjar.com](http://www.brainjar.com/js/validation/).
 
-#### donation.isValidCC #####
+##### donation.isValidCC ######
 
 Performs a Luhn check on the credit card number as well as checking the length/format of the CVV to make sure it corresponds to the card type.
 
