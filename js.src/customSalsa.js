@@ -76,15 +76,15 @@ var customSalsa = {
 
 		s$(document).ajaxSuccess( function( event, xhr, settings ) {
 
-			if ( settings.url.indexOf('actionJSON.sjs') !=  -1 ) {
+			if ( settings.url.indexOf('actionJSON.sjs') !==  -1 ) {
 				actionName = 'actionloaded';
-			} else if ( settings.url.indexOf('targetJSON.sjs') !=  -1 ) {
+			} else if ( settings.url.indexOf('targetJSON.sjs') !==  -1 ) {
 				actionName = 'targetsloaded';
-			} else if ( settings.url.indexOf('processAction2.jsp') != -1 ) {
+			} else if ( settings.url.indexOf('processAction2.jsp') !== -1 ) {
 				actionName = 'actionprocessed';
-			} else if ( settings.url.indexOf('blind_submit.sjs') != -1 ) {
+			} else if ( settings.url.indexOf('blind_submit.sjs') !== -1 ) {
 				actionName = 'actionsubmitted blindactionsubmitted';
-			} else if ( settings.url.indexOf('processWebform.sjs') != -1 ) {
+			} else if ( settings.url.indexOf('processWebform.sjs') !== -1 ) {
 				actionName = 'targetwebformsubmitted';
 			}
 			// trigger the action
@@ -120,7 +120,7 @@ var customSalsa = {
 		});
 
 		// if we're on an action page, let's try to figure out the action type
-		if ( addedClass == 'action' ) {
+		if ( addedClass === 'action' ) {
 			// blind targeted actions have a different form action
 			var $form = jQ('form[onsubmit]');
 			if ( $form.length && $form.attr('action').indexOf('blind_submit') > 1 ) {
@@ -141,7 +141,7 @@ var customSalsa = {
 			else {
 				jQ(document).ajaxSuccess( function( event, xhr, settings ) {
 					// need to listen to the call that fetches the ajax
-					if ( settings.url.indexOf('actionJSON.sjs') !=  -1 ) {
+					if ( settings.url.indexOf('actionJSON.sjs') !==  -1 ) {
 						// let's look for "Style":"Targeted","Petition" or "Multi-Content"
 						if ( xhr.response.indexOf('"Style":"Targeted"') > 1 ) {
 							jQ('body').addClass('action-targeted');
@@ -331,11 +331,11 @@ var customSalsa = {
 		if ( ! value || 0 === value.length ) return false;
 
 		// done with emptiness tests. If that's all, we're done here
-		if ( 'empty' == type ) return true;
+		if ( 'empty' === type ) return true;
 
 		// validate zipcodes. allow 5-digit, zip+4
 		// @todo : Canadian postal codes? Check against this.allowCanadianPostalCodes
-		if ( 'zip' == type ) {
+		if ( 'zip' === type ) {
 			var isValidZip =  this.settings.regex.zip.test( value );
 
 			if ( isValidZip ) return true;
@@ -348,17 +348,17 @@ var customSalsa = {
 		}
 
 		// validate email
-		if ( 'email' == type ) {
+		if ( 'email' === type ) {
 			return this.settings.regex.email.test( value );
 		}
 
 		// validate numeric
-		if ( 'integer' == type ) {
+		if ( 'integer' === type ) {
 			return this.settings.regex.integer.test( value );
 		}
 
 		// validate numeric
-		if ( 'decimal' == type ) {
+		if ( 'decimal' === type ) {
 			return this.settings.regex.decimal.test( value );
 		}
 
@@ -438,7 +438,7 @@ var customSalsa = {
 			// manually check just to be sure
 			jQ('.required').each( function() {
 				var $requiredInput = jQ(this).closest('.formRow').find('input, select');
-				if ( jQ.inArray( $requiredInput, requiredFields ) == -1 ) {
+				if ( jQ.inArray( $requiredInput, requiredFields ) === -1 ) {
 					requiredFields.push( $requiredInput );
 				}
 			});
@@ -617,7 +617,7 @@ var customSalsa = {
 					isValid: false,
 					errors: [{ element: $yearElement, message: 'Please enter an expiration date in the future.', }]
 				};
-			} else if ( +$yearElement.val() + 2000 == currentYear && +$monthElement.val() < currentMonth ) {
+			} else if ( +$yearElement.val() + 2000 === currentYear && +$monthElement.val() < currentMonth ) {
 				return {
 					isValid: false,
 					errors: [{ element: $monthElement, message: 'Please enter an expiration month/year in the future.', }]
@@ -704,13 +704,13 @@ var customSalsa = {
 				}
 
 				// switch from amount to amountOther if no amount before we do any testing
-				if ( jQ(this).attr('id') == 'amount' && '' === $input.val().trim() ) {
+				if ( jQ(this).attr('id') === 'amount' && '' === $input.val().trim() ) {
 					$input = jQ('#amountOther');
 					label = "amount";
 				}
 
 				// debugging help
-				if ( label == 'Unknown' ) console.log( $input );
+				if ( label === 'Unknown' ) console.log( $input );
 
 				// test the value based on its type
 				var validationType = customSalsa.getFieldValidationType( $input );
