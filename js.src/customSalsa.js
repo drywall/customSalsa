@@ -1,4 +1,4 @@
-// delete console;
+//delete console;
 
 /**
  * Our mega-amazing Salsa object
@@ -139,7 +139,7 @@ var customSalsa = {
 			// if #sign-page is still hidden, the XHR hasn't finished
 			// let's listen in and then react!
 			else {
-				jQ(document).ajaxSuccess( function( event, xhr, settings ) {
+				s$(document).ajaxSuccess( function( event, xhr, settings ) {
 					// need to listen to the call that fetches the ajax
 					if ( settings.url.indexOf('actionJSON.sjs') !==  -1 ) {
 						// let's look for "Style":"Targeted","Petition" or "Multi-Content"
@@ -467,9 +467,9 @@ var customSalsa = {
 					'disc' : /^6(?:011\d\d|5\d{4}|4[4-9]\d{3}|22(?:1(?:2[6-9]|[3-9]\d)|[2-8]\d\d|9(?:[01]\d|2[0-5])))\d{10}$/
 				},
 				returnVal = false,
-				ccNum = typeof ccNum !== 'object' ? $ccNum.val() : jQ('#cc_number').val();
+				ccNum = typeof $ccNum === 'object' ? $ccNum.val() : jQ('#cc_number').val();
 
-			setElement = typeof setElement !== 'string' ? setElement : '#cc_type';
+			setElement = typeof setElement === 'string' ? setElement : '#cc_type';
 
 			jQ.each( tests, function( key, value ) {
 				if ( ccNum.match( value ) !== null ) {
@@ -589,7 +589,6 @@ var customSalsa = {
 			return returnObj;
 		},
 
-
 		/**
 		 * Checks CC expiration
 		 */
@@ -640,6 +639,16 @@ var customSalsa = {
 				theAmount = +jQ('#amount', $form).val() + +jQ('#amountOther', $form).val(),
 				returnObj = { errors: [], isValid : true };
 
+			// too blank?
+			if ( jQ('#amount', $form).val() === "" && jQ('#amountOther', $form).val() === "" ) {
+				returnObj.isValid = false;
+				returnObj.errors.push({
+					value   : jQ('#amountOther', $form).val(),
+					message : "Please choose or enter a dollar amount."
+				});
+				return returnObj;
+			}
+
 			// too non-dollar-y?
 			if ( jQ('#other:checked').length && ! customSalsa.settings.regex.dollar.test( jQ('#amountOther', $form).val() ) ) {
 				returnObj.isValid = false;
@@ -647,7 +656,6 @@ var customSalsa = {
 					value   : jQ('#amountOther', $form).val(),
 					message : "Please enter a valid dollar amount."
 				});
-
 				return returnObj;
 			}
 
@@ -658,7 +666,6 @@ var customSalsa = {
 					value   : +jQ('#amount', $form).val() + +jQ('#amountOther', $form).val(),
 					message : "Please enter a larger amount; minimum is $" + minimumAmount
 				});
-
 				return returnObj;
 			}
 
@@ -673,6 +680,79 @@ var customSalsa = {
 			}
 
 			return returnObj;
+		},
+
+		/**
+		 * Validate a portion of things on a donation form, specifically things confined to a particular step
+		 * on a multi-step form. Multi-step form creation still to be merged into customSalsa
+		 */
+		validateStep : function( stepNum, showErrors ) {
+			var $step = jQ('.step' + stepNum),
+				returnObj = { errors: [], isValid : true };
+
+			// step1 just has amount
+			if ( 1 === stepNum ) {
+				// check the amount meets Salsa min or max config if present
+				donationAmountValidation = this.isValidDonationAmount( $step.closest('form') );
+				if ( !donationAmountValidation.isValid ) {
+					returnObj.isValid = false;
+					returnObj.errors.push.apply( returnObj.errors, donationAmountValidation.errors );
+				}
+			}
+			// step2 has personal information, but no payment stuff
+			else if ( 2 === stepNum ) {
+				// Check all required input fields to ensure values are present/valid
+				$step.find('.required').not('span').each(function(){
+					var $input = jQ(this),
+						label = 'Unknown';
+
+					// fetch label/placeholder based on field type
+					if ( $input.is('input') && $input.attr('placeholder') ) {
+						label = $input.attr('placeholder');
+					}	else if ( $input.is('select') ) {
+						label = jQ('option:first-child', $input).text();
+					}
+
+					// test the value based on its type
+					var validationType = customSalsa.getFieldValidationType( $input );
+					if ( ! customSalsa.validateField( $input.val(), validationType ) ) {
+						returnObj.isValid = false;
+						returnObj.errors.push({
+							element: $input,
+							message: 'A valid ' + label + ' is required'
+						});
+					}
+				});
+			}
+			// step3 just has payment stuff
+			// this should never be invoked since the per-step validation only happens when moving forward
+			else if ( 3 === stepNum ) {
+				// check for valid-looking credit card numbers
+				// @todo Make sure this checks the form for checks as well, not always is a CC required
+				ccValidation = this.isValidCC( jQ('#cc_number'), jQ('#CVV2'), jQ('#cc_type') );
+				if ( ! ccValidation.isValid ) {
+					returnObj.isValid = false;
+					returnObj.errors.push.apply( returnObj.errors, ccValidation.errors );
+				}
+
+				// Check for cc expiration
+				// Again, we need to check on check vs. card first, technically
+				expiryValidation = this.isValidCCExpiry( jQ('#ccExpMonth'), jQ('#ccExpYear') );
+				if ( ! ccValidation.isValid ) {
+					returnObj.isValid = false;
+					returnObj.errors.push.apply( returnObj.errors, expiryValidation.errors );
+				}
+			}
+
+			// same as validateDonationForm; move to separate method?
+			if ( returnObj.isValid ) {
+				return true;
+			} else if ( showErrors ) {
+				customSalsa.showErrors( returnObj );
+				return false;
+			} else {
+				return returnObj;
+			}
 		},
 
 		/**
@@ -776,6 +856,10 @@ var customSalsa = {
 			// we need mediaCheck!
 			if ( typeof mediaCheck !== 'function' ) return false;
 
+			// some actions are bad
+			if ( jQ('body').hasClass('action') ) return false;
+
+			)
 			mediaCheck({
 				media: '(max-width: ' + width + 'px)',
 
@@ -820,8 +904,6 @@ var customSalsa = {
 			this.mobilizeInputTypes( breakpoint );
 			jQ('html').addClass('mobilized');
 		}
-
-
 
 	}
 
