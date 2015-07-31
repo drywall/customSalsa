@@ -96,9 +96,21 @@ Like the above, but for bank routing numbers. Per [Brainjar.com](http://www.brai
 
 Performs a Luhn check on the credit card number as well as checking the length/format of the CVV to make sure it corresponds to the card type.
 
+##### donation.validateDonationForm #####
+
+Checks that all required fields are valid, payment info is good, etc. on a donation form. Call this on form submit so your users don't have to wait for Salsa's response! (Note: doesn't check everything quite yet)
+
+##### donation.validateStep #####
+
+If you're using the makeMultistep method (see below), this method validates a particular 'step' before users can move on to the next one.
+
 ##### donation.validateForm #####
 
 Checks that all required fields are valid, payment info is good, etc. on a donation form. Call this on form submit so your users don't have to wait for Salsa's response! (Note: doesn't check everything quite yet)
+
+##### donation.makeMultistep #####
+
+This gargantuan method (which itself contains many other methods) can be called to transform a regular donation form into a fancy, beautiful multi-step donation form a la the Obama campaign. Best when used with the SASS multistep partial. COMPLETELY UNTESTED in this context; this is code that was written as a standalone system and recently folded into this project — there may be bad function calls and whatnot that still need to be resolved.
 
 ##### donation.lightbox.init #####
 
