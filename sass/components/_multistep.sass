@@ -1,0 +1,429 @@
+// colors
+$progress-bkgnd:  #1998D3
+$progress-active: #FEEE35
+$progress-fade:   #ffffff
+$amount-button:   #ffffff
+$amount-active:   #F26C20
+$step-button:     #F26C20
+$alert:           #ec2500
+
+// other design elements
+$gradient-strength: 0%
+$corner-radius:     14px // must be at least 1px
+$main-font:        'Helvetica Neue', Helvetica, Arial, sans-serif
+$input-font:       'Helvetica Neue', Helvetica, Arial, sans-serif
+$display-font:     'BebasNeue', sans-serif
+
+=mobile
+	@media only screen and (max-width : 767px)
+		@content
+
+/**
+ * Actual layout stuff
+ */
+.visuallyhidden
+	position: absolute
+	overflow: hidden
+	clip: rect(0 0 0 0)
+	height: 1px
+	width: 1px
+	margin: -1px
+	padding: 0
+	border: 0
+
+.html .main-container.container
+	width: 100%
+	padding-bottom: 0
+
+#salsa
+	max-width: 1200px
+	margin: 0 auto
+	+legacy-pie-clearfix
+	padding-bottom: 60px
+	border-top: 1px solid transparent
+	font-family: $main-font
+	.formRow
+		+mobile
+			padding-left: 0
+	form
+		width: 600px
+		max-width: 100%
+		display: block
+		margin-right: percentage(40/980)
+		float: right
+		> h1
+			text-align: center
+			margin: 0.2em auto 10px
+			font-family: $display-font
+		+mobile
+			margin-left: percentage(40/980)
+			width: percentage(900/980)
+			float: none
+			h1
+				font-size: 32px
+				line-height: 1em
+
+#step-box
+	background-color: white
+	+box-shadow(0 8px 15px rgba(black,0.6))
+
+.steps
+	position: relative
+	+single-transition(height, 0.4s, ease)
+	overflow: hidden
+
+#salsaDonationFooter
+	max-width: 980px
+	position: relative
+	top: -30px
+	+box-sizing(border-box)
+	padding: 30px percentage(40/980) 10px
+	background-color: white
+	margin: 0 auto
+
+#salsaDonationHeader
+	font-size: 15px
+	margin-top: 40px
+	p
+		line-height: 1.4em
+	h1
+		height: auto
+		line-height: 1.1em
+		font-size: 24px
+		color: black
+		font-family: $display-font
+	@media screen and (max-width: 1000px)
+		margin: 30px percentage(40/980)
+
+.alert-error
+	float: left
+	+box-sizing(border-box)
+	margin-top: 81px
+	margin-left: 8px
+	h4
+		color: $alert
+		font
+			weight: bold
+			size: 17px
+		margin: 0.3em 0
+	+mobile
+		min-width: 0
+		margin-left: percentage(40/980)
+		width: percentage(900/980) !important
+		float: none
+
+
+/**
+ * progressbar & secure
+ */
+.progress-wrapper
+	background-color: $progress-bkgnd
+	padding: 20px
+	width: 100%
+	+box-sizing(border-box)
+	position: relative
+	height: 80px
+	-webkit-font-smoothing: antialiased
+	+mobile
+		display: none
+
+.progress-meter
+	display: block
+	margin: 0 0 0 0
+	padding: 0 0 0 0
+	&:before
+		content: " "
+		display: block
+		+opacity(.4)
+		height: 2px
+		position: absolute
+		top: 50%
+		margin-top: -1px
+		width: 90%
+		background-color: $progress-active
+	li
+		color: white
+		text-transform: uppercase
+		+single-transition(all, 0.3s, ease)
+		font:
+			size: 18px
+			weight: bold
+		line-height: 40px
+		background-color: $progress-fade
+		text-align: center
+		+border-radius(20px)
+		width: 140px
+		height: 40px
+		+inline-block
+		position: absolute
+		top: 20px
+		cursor: default	//really?
+		&.step-1
+			left: 20px
+		&.step-2
+			left: 50%
+			margin-left: -70px
+		&.step-3
+			right: 20px
+		&.active
+			background: $progress-active
+
+.secure
+	font-weight: bold
+	color: #888
+	text-align: right
+	padding: 10px 10px 0 10px
+	font-size: 13px
+	i
+		+opacity(0.6)
+		margin-left: 0.2em
+
+// in the steps
+.step1,
+.step2,
+.step3
+	padding: 0 percentage(40/600) 15px
+	position: absolute
+	top: 0
+	left: 0
+	+box-sizing(border-box)
+	width: 100%
+	clear: none
+	+mobile
+		padding: 5px 4% 15px
+
+	h2
+		font-size: 24px
+		font-weight: normal
+		color: black
+		margin: 0 0 5px 0
+		line-height: 1.2em
+		-webkit-font-smoothing: antialiased
+		span
+			float: right
+			font:
+				size: 13px
+				style: italic
+			color: #888
+			-webkit-font-smoothing: antialiased
+		&.extra
+			margin-top: 0.7em
+	+mobile
+		position: static
+		display: block !important
+
+
+#step-box
+	button
+		border: 1px solid darken($amount-button, $gradient-strength)
+		+border-radius( $corner-radius )
+		background-color: $amount-button
+		+background-image(linear-gradient(top, $amount-button, darken($amount-button, $gradient-strength)))
+		background-position: center center
+		font-weight: bold
+		color: white
+		+inline-block
+		cursor: pointer
+		font-size: 24px
+		height: 60px
+		width: auto
+		min-width: 140px
+		padding: 20px 30px
+		+box-sizing(border-box)
+		margin: 10px 13px
+		+text-shadow(0 1px 1px rgba(black,0.5))
+		+single-transition(all, 0.3s, ease)
+		+transition-property(border, background, text-shadow)
+		&:hover
+			+background-image(linear-gradient(bottom, $amount-button, darken($amount-button, $gradient-strength)))
+		&.active
+			border-color: darken($amount-active, $gradient-strength * 2)
+			+background-image(linear-gradient(top, $amount-active, darken($amount-active, $gradient-strength)))
+		&:active
+			position: relative
+			top: 1px
+		+mobile
+			margin: 8px 8px
+			min-width: 100px
+			padding: 20px 10px
+	.step-actions
+		text-align: center
+		margin-top: 20px
+		button
+			margin: 0 auto 0
+			border: 1px solid darken($step-button, $gradient-strength)
+			background-color: $amount-active
+			+background-image(linear-gradient(top, $amount-active, darken($amount-active, $gradient-strength)))
+			text-transform: uppercase
+			&:after
+				content: " »"
+			&:hover
+				+background-image(linear-gradient(bottom, $amount-active, darken($amount-active, $gradient-strength)))
+			&.submit
+				margin: 10px auto
+			+mobile
+				display: none
+				&.submit
+					display: block
+					font-size: 18px
+	.other
+		margin: 10px 13px 20px
+		+legacy-pie-clearfix
+		label
+			font:
+				size: 23px
+				family: 'Helvetica Neue', Helvetica, Arial, sans-serif
+			line-height: 50px
+			color: #666
+			padding-right: 0.2em
+		input#amountOther
+			+background-image(linear-gradient(top, white, #f6ede2))
+			border-color: $amount-button
+			padding: 10px
+			height: 50px
+			float: right
+	.icon-lock
+		+inline-block
+		width: 14px
+		height: 17px
+		background:
+			color: white
+			image: image-url('lock.png')
+			size: contain
+
+	input[type='text'],
+	input[type='email'],
+	input[type='number'],
+	.details > input,
+	select
+		+border-radius( $corner-radius - 1 )
+		font:
+			size: 18px
+			family: $input-font
+		border: 1px solid #d7d7d7
+		background-color: #f8f8f8
+		+box-sizing(border-box)
+		height: 40px
+		padding: 8px
+		margin: 0 0 0 0
+		&.failed
+			border-color: $alert
+	select
+		-webkit-appearance: button
+		padding-right: 20px
+		background:
+			image: url('https://org2.salsalabs.com/o/5674/images/select-controls.png')
+			position: 94% center
+			repeat: no-repeat
+		@media screen and (max-width: 450px)
+			background-position: 98% center
+	input[type='checkbox']
+		margin-right: 0.8em
+	label
+		font:
+			family: 'Helvetica Neue', Helvetica, sans-serif
+			size: 18px
+	.checkbox
+		float: none
+	// SPECIFIC FORM FIELDS
+	.details,
+	.custom-fields,
+	.honors,
+	.dcode
+		margin-left: -10px
+		margin-right: -10px
+		> *
+			+inline-block
+		input, select
+			margin: 7px percentage(10/540)
+			width: percentage(520/540)
+		.half
+			width: percentage(250/540)
+		.small
+			width: percentage(140/540)
+		.tiny
+			width: percentage(90/540)
+		.medium
+			width: percentage(360/540)
+		@media screen and (max-width: 450px)
+			margin-left: 0
+			margin-right: 0
+			input,
+			select,
+			.half,
+			.small,
+			.tiny,
+			.medium
+				width: 100%
+				margin-left: 0
+				margin-right: 0
+	.honors,
+	.dcode
+		input, select
+			border: 1px solid #95ccdb
+			background-color: #dff2f7
+	.dcode
+		margin-top: 10px
+	.oneid
+		label
+			font-size: 16px
+		a
+			color: #008aaf
+			padding-left: 0.5em
+			font-size: 16px
+	p
+		margin-bottom: 0
+	.step3
+		legend
+			display: none
+	#credit_card_information
+		margin: 0 auto
+		max-width: 400px
+		.formRow
+			margin-left: 0
+		label,
+		select[name='cc_type']
+			display: none
+		.helpText
+			display: none
+		input, select
+			margin: 7px 0
+	#cc_number
+		width: 100%
+	#ccExpMonth
+		width: 61.5%
+	#ccExpYear
+		width: 35%
+		float: right
+	a
+		color: #008AAF
+		padding-left: 0.3em
+		font-size: 16px
+	span.required
+		display: none
+	+mobile
+		#ccExpMonth,
+		#ccExpYear
+			width: 100%
+			float: none
+		#CVV2
+			width: 100px
+
+#preCustomText
+	margin-top: 0.8em
+
+.amounts
+	padding: 0 2%
+	+mobile
+		text-align: center
+		padding: 0 0
+
+.steps
+	section
+		margin: 10px 0
+		padding: 14px 2px
+		border:
+			top: 1px solid #ddd
+			bottom: 1px solid #ddd
+		font-size: 18px
+
