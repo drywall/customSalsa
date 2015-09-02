@@ -24,6 +24,7 @@ var customSalsa = {
 				'/action3'              : 'action',
 				'/viewCart.jsp'         : 'shop-cart',
 				'/item.jsp'             : 'shop-item',
+				'/checkOut.jsp'         : 'shop-checkout'
 				'/donation/'            : 'donate'
 			},
 		activeLabelSelector: 'input[type="radio"]',
@@ -31,16 +32,16 @@ var customSalsa = {
 		placeholderLabelSpeed: 100,
 		placeholderHideSelectLabels: true,
 		mobilizeConversions: {
-	    Email: 'email',
-	    In_Honor_Email: 'email',
-	    Zip: 'number',
-	    cc: 'number',
-	    Employer_Zip: 'number',
-	    Phone: 'tel',
-	    Work_Phone: 'tel',
-	    Cell_Phone: 'tel',
-	    otheramt: 'number'
-	  },
+			Email: 'email',
+			In_Honor_Email: 'email',
+			Zip: 'number',
+			cc: 'number',
+			Employer_Zip: 'number',
+			Phone: 'tel',
+			Work_Phone: 'tel',
+			Cell_Phone: 'tel',
+			otheramt: 'number'
+				},
 		mobilizeBreak: 500,
 		allowCanadianPostalCodes: false,
 		regex: {
@@ -85,7 +86,7 @@ var customSalsa = {
 	 */
 	initJQ : function( version ) {
 
-		version = typeof version !== 'undefined' ? version : '1.11.2';
+		version = typeof version !== 'undefined' ? version : '1.11.3';
 		// inject it
 		document.write('<scr' + 'ipt type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/'+version+'/jquery.min.js"></scr' + 'ipt>');
 		// alias it and give it back
@@ -1309,6 +1310,9 @@ var customSalsa = {
 		/**
 		 * Converts input types to mobile-friendly versions where appropriate
 		 * Relies on mediaCheck https://github.com/sparkbox/mediaCheck
+		 * EXTREMELY DANGEROUS. Salsa uses an old version of jQuery that can't properly .serialize() inputs with HTML5 types
+		 * As a result, they're not submitted. Stuff breaks. It's bad.
+		 * @todo would be to redefine the Salsa function that calls serialize() to have it use jQ instead of s$.
 		 */
 		mobilizeInputTypes : function( width, config ) {
 
