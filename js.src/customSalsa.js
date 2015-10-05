@@ -24,7 +24,7 @@ var customSalsa = {
 				'/action3'              : 'action',
 				'/viewCart.jsp'         : 'shop-cart',
 				'/item.jsp'             : 'shop-item',
-				'/checkOut.jsp'         : 'shop-checkout'
+				'/checkOut.jsp'         : 'shop-checkout',
 				'/donation/'            : 'donate'
 			},
 		activeLabelSelector: 'input[type="radio"]',
@@ -1322,8 +1322,11 @@ var customSalsa = {
 			// we need mediaCheck!
 			if ( typeof mediaCheck !== 'function' ) return false;
 
-			// some actions are bad
-			if ( jQ('body').hasClass('action') ) return false;
+			// don't do this on actions
+			// Salsa calls .serialize() in jQuery 1.3.2, which is so old it doesn't know about HTML5 input types and skips them
+			// That causes data to not be submitted to Salsa, which is (ahem) problematic.
+			// Probably could stand to have a more robust approach to this, but at least we've got something.
+			if ( page.indexOf( '/action' > 1 ) ) return false;
 
 			mediaCheck({
 				media: '(max-width: ' + width + 'px)',
