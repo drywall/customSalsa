@@ -77,7 +77,7 @@ var customSalsa = {
 			'code_options'	   : [],
 			'remember'			   : 'Remember me so I can donate with one click in the future',
 			'payment_label'	   : 'Payment Information',
-			'mobileBreakpoint' : 650
+			'mobileBreakpoint' : 767
 		}
 	},
 
@@ -1014,7 +1014,7 @@ var customSalsa = {
 				jQ("[name='First_Name'], [name='Last_Name'], [name='City']", $step2inner).addClass('half');
 				jQ("[name='Zip'], [name='Country']", $step2inner).addClass('small');
 				jQ("[name='State']", $step2inner).addClass('tiny');
-				jQ("[name='Email']", $step2inner).addClass('medium required-email').attr('type', 'email');
+				jQ("[name='Email']", $step2inner).addClass('required-email').attr('type', 'email');
 
 				//do we have custom fields? If so, add those
 				if ( jQ('#preCustomText').length ) {
@@ -1271,7 +1271,7 @@ var customSalsa = {
 					}
 					//if going from mobile stack to multistep
 					else if ( $win.data('currentWidth') <= customSalsa.donation.multistep.text.mobileBreakpoint ) {
-						setupStep1();
+						customSalsa.donation.multistep.setupStep1();
 					}
 					$win.data('currentWidth', $win.width() );
 				}).trigger('resize');
@@ -1280,7 +1280,7 @@ var customSalsa = {
 			// Output errors specific for the multistep form
 			displayErrors : function( errorObj ) {
 
-				Q('.alert-error').remove();	//destroy old error stuff
+				jQ('.alert-error').remove();	//destroy old error stuff
 				window.location.hash = '#error-box';
 				jQ('.failed').removeClass('failed');
 
@@ -1302,7 +1302,7 @@ var customSalsa = {
 					.insertBefore('form.orderform');
 
 				if ( errorObj.errors.length === 1 ) {
-					if ( errorObj.errors[0].element.is(':hidden') ) {
+					if ( errorObj.errors[0].element && errorObj.errors[0].element.is(':hidden') ) {
 						var newStep = errorObj.errors[0].element.closest('.single-step').data('step');
 						jQ('.step-' + newStep).trigger('click');
 					}
@@ -1392,6 +1392,7 @@ var customSalsa = {
 	}
 
 };
+
 
 /**
  * Give ourselves a modern version of jQuery if we need it... (defaults to 1.11.3)
