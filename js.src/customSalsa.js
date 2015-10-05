@@ -52,7 +52,7 @@ var customSalsa = {
 			decimal: /^\d+\.?\d*$/,
 			dollar: /^[0-9]+(\.[0-9][0-9])?$/
 		},
-		multistepStings : {
+		multistepStrings : {
 			'title'	           : 'Support Us Today!',
 			'secure'           : 'Secure',
 
@@ -869,64 +869,77 @@ var customSalsa = {
 		 * Turn a donation form into a multistep
 		 * This is extremely opinionated right now and needs to be made more configurable
 		 */
-		makeMultistep : function( strings ) {
 
-			// setup strings
-			var text = customSalsa.settings.multistepStrings;
-			if ( 'object' === typeof strings ) {
-				text = jQ.extend(customSalsa.settings.multistepStrings, strings);
-			}
+		multistep : {
 
-			// setup progress div
-			var $progress = jQ('<div/>')
-				.addClass('progress-wrapper')
-				.append('<ul class="progress-meter" />')
-				.children('ul')
-				.append('<li class="step-1">' + text.step1_progress + '</li>')
-				.append('<li class="step-2">' + text.step2_progress + '</li>')
-				.append('<li class="step-3">' + text.step3_progress + '</li>')
-				.end();
+			init : function( strings ) {
 
-			// setup secure icon
-			var $secure = jQ('<div/>')
-				.addClass('secure')
-				.append( text.secure )
-				.append('<i class="icon-lock"></i>');
+				// setup strings
+				customSalsa.donation.multistep.text = customSalsa.settings.multistepStrings;
+				if ( 'object' === typeof strings ) {
+					customSalsa.donation.multistep.text = jQ.extend(customSalsa.settings.multistepStrings, strings);
+				}
+				var text = customSalsa.donation.multistep.text;
 
-			// setup step divs
-			var $step1 = jQ('<div/>').addClass('step1 single-step').data('step',1),
-				$step2 = jQ('<div/>').addClass('step2 single-step').data('step',2),
-				$step3 = jQ('<div/>').addClass('step3 single-step').data('step',3),
-				$step1inner = jQ('<fieldset>'),
-				$step2inner = jQ('<fieldset>'),
-				$step3inner = jQ('<fieldset>');
+				// setup progress div
+				customSalsa.donation.multistep.$progress = jQ('<div/>')
+					.addClass('progress-wrapper')
+					.append('<ul class="progress-meter" />')
+					.children('ul')
+					.append('<li class="step-1">' + text.step1_progress + '</li>')
+					.append('<li class="step-2">' + text.step2_progress + '</li>')
+					.append('<li class="step-3">' + text.step3_progress + '</li>')
+					.end();
 
-			// create the multistep
-			var initForm = function() {
+				// setup secure icon
+				customSalsa.donation.multistep.$secure = jQ('<div/>')
+					.addClass('secure')
+					.append( customSalsa.donation.multistep.text.secure )
+					.append('<i class="icon-lock"></i>');
+
+				// setup step divs
+				customSalsa.donation.multistep.$step1 = jQ('<div/>').addClass('step1 single-step').data('step',1);
+				customSalsa.donation.multistep.$step2 = jQ('<div/>').addClass('step2 single-step').data('step',2);
+				customSalsa.donation.multistep.$step3 = jQ('<div/>').addClass('step3 single-step').data('step',3);
+				customSalsa.donation.multistep.$step1inner = jQ('<fieldset>');
+				customSalsa.donation.multistep.$step2inner = jQ('<fieldset>');
+				customSalsa.donation.multistep.$step3inner = jQ('<fieldset>');
+
+				/**
+				 * Helper functions
+				 */
+
+				customSalsa.donation.multistep.initForm();
+				customSalsa.donation.multistep.attachBehaviors();
+
+			},
+
+			// create the multistep form stuff
+			initForm : function() {
 				/**
 				 * Populate divs
 				 */
-				customSalsa.donation.makeMultistep.buildStep1();
-				customSalsa.donation.makeMultistep.buildStep2();
-				customSalsa.donation.makeMultistep.buildStep3();
+				customSalsa.donation.multistep.buildStep1();
+				customSalsa.donation.multistep.buildStep2();
+				customSalsa.donation.multistep.buildStep3();
 
 				/**
 				 * Compile the three steps into a box
 				 */
 				var $box = jQ('<div id="step-box" />'),
 					$steps = jQ('<div class="steps" />');
-				$step1.append( $step1inner );
-				$step2.append( $step2inner );
-				$step3.append( $step3inner );
-				$steps.append( $step1, $step2, $step3 );
-				$box.append( $progress, $secure, $steps );
+				customSalsa.donation.multistep.$step1.append( customSalsa.donation.multistep.$step1inner );
+				customSalsa.donation.multistep.$step2.append( customSalsa.donation.multistep.$step2inner );
+				customSalsa.donation.multistep.$step3.append( customSalsa.donation.multistep.$step3inner );
+				$steps.append( customSalsa.donation.multistep.$step1, customSalsa.donation.multistep.$step2, customSalsa.donation.multistep.$step3 );
+				$box.append( customSalsa.donation.multistep.$progress, customSalsa.donation.multistep.$secure, $steps );
 
 				//hide the regular form stuff, then put our box in it.
 				jQ('form.orderform > *:visible').hide();
 				jQ('form.orderform').prepend( $box );
-				jQ('form.orderform').prepend( '<h1>' + text.title + '</h1>' );
+				jQ('form.orderform').prepend( '<h1>' + customSalsa.donation.multistep.text.title + '</h1>' );
 
-				customSalsa.donation.makeMultistep.setupStep1();
+				customSalsa.donation.multistep.setupStep1();
 
 				//other layout tweaks
 				jQ('#salsa').wrap('<div class="salsa-outer" />');
@@ -936,14 +949,10 @@ var customSalsa = {
 				if ( ! jQ('input[name="amountMinimum"]').length ) {
 					jQ('form.orderform').append('<input name="amountMinimum" type="hidden" value="2">');
 				}
-			};
-
-			/**
-			 * Helper functions
-			 */
+			},
 
 			// Ready Step 1 pane (set heights, classes, etc)
-			var setupStep1 = function() {
+			setupStep1 : function() {
 				//set step-1 as active
 				jQ('#step-box *').removeClass('active');
 				jQ('.step-1, .step1').addClass('active');
@@ -960,14 +969,16 @@ var customSalsa = {
 				jQ('form.orderform').css('height', formMaxHeight);
 				jQ('.steps').height( step1height );
 				jQ('.step2, .step3').hide();
-			};
+			},
 
 			// Build Step 1 pane
-			var buildStep1 = function() {
-				$step1inner.append('<h2>' + text.amount_label + '</h2>');
+			buildStep1 : function() {
+				var $step1inner = customSalsa.donation.multistep.$step1inner,
+					amounts = customSalsa.donation.multistep.getDonationAmounts(),
+					text = customSalsa.donation.multistep.text;
+				$step1inner.append('<h2>' + customSalsa.donation.multistep.text.amount_label + '</h2>');
 				jQ('#pre_donation_text').appendTo( $step1inner );
 				$step1inner.append('<div class="amounts"/>');
-				var amounts = customSalsa.donation.makeMultistep.getDonationAmounts();
 				jQ.each( amounts, function(index, value) {
 					jQ('.amounts', $step1inner).append('<button class="button" value="' + value + '">$' + value + '</button>');
 				});
@@ -984,15 +995,20 @@ var customSalsa = {
 				//destroy Salsa fields & replace with ours
 				jQ('input[name="amount"], #recurrence, .otherRow').remove();
 				$step1inner.append('<input type="hidden" name="amount" id="amount" value="" class="required" placeholder="Amount">');
-			};
+			},
 
 			// Build Step 2 pane
-			var buildStep2 = function() {
+			buildStep2 : function() {
+
+				var $step2inner = customSalsa.donation.multistep.$step2inner,
+					amounts = customSalsa.donation.multistep.getDonationAmounts(),
+					text = customSalsa.donation.multistep.text;
+
 				$step2inner.append('<h2>' + text.details_label + '</h2>');
 				$step2inner.append('<div class="details"/>');
 
 				// get the 'your information' fields - maybe abstract into a function?
-				$normalInputs = customSalsa.donation.makeMultistep.getFormRows( '.supporterInfo > .diaFields' );
+				$normalInputs = customSalsa.donation.multistep.getFormRows( '.supporterInfo > .diaFields' );
 				jQ('.details', $step2inner).append( $normalInputs );
 
 				jQ("[name='First_Name'], [name='Last_Name'], [name='City']", $step2inner).addClass('half');
@@ -1007,7 +1023,7 @@ var customSalsa = {
 				if ( jQ('#customFields').length ) {
 					$step2inner.append('<div class="custom-fields"/>');
 				}
-				$customFields = customSalsa.donation.makeMultistep.getFormRows( '#customFields' );
+				$customFields = customSalsa.donation.multistep.getFormRows( '#customFields' );
 				jQ('.custom-fields', $step2inner ).append( $customFields );
 
 				//do we have extra honor/designee fields? if so, add headers
@@ -1054,10 +1070,14 @@ var customSalsa = {
 
 				//next button for step 2
 				$step2inner.append('<div class="step-actions"><button class="formnav">' + text.step2_button + "</button></div>");
-			};
+			},
 
 			// Build Step 3 pane
-			var buildStep3 = function() {
+			buildStep3 : function() {
+
+				var $step3inner = customSalsa.donation.multistep.$step3inner,
+					text = customSalsa.donation.multistep.text;
+
 				$step3inner.append('<h2>' + text.payment_label + '</h2>');
 				$step3inner.append( jQ('#credit_card_information') );
 				if ( jQ('#presubmit_footer').length ) {
@@ -1070,10 +1090,10 @@ var customSalsa = {
 				jQ('#ccExpYear > option:first', $step3inner).text('Exp. Year').parent().addClass('required');
 				jQ('a[target]', $step3inner).insertAfter( jQ('#CVV2', $step3inner) );
 				$step3inner.append('<div class="step-actions"><button class="submit">' + text.step3_button + "</button></div>");
-			};
+			},
 
 			// Get an array of the available donation amounts
-			var getDonationAmounts = function() {
+			getDonationAmounts : function() {
 				var amounts = [];
 				jQ("input[name='amount']").each( function() {
 					if ( jQ(this).val() ) {
@@ -1081,10 +1101,10 @@ var customSalsa = {
 					}
 				});
 				return amounts;
-			};
+			},
 
 			// get formRow (usually personal info fields and return as array of jQ objects
-			var getFormRows = function( selector ) {
+			getFormRows : function( selector ) {
 				var $return = jQ();
 				jQ('.formRow', jQ(selector)).each( function() {
 					var $this = jQ(this),
@@ -1102,10 +1122,10 @@ var customSalsa = {
 					$return = $return.add( $input );
 				});
 				return $return;
-			};
+			},
 
 			// get the current height of the step/pane
-			var getStepHeight = function( $obj ) {
+			getStepHeight : function( $obj ) {
 				//easy if it's showing
 				if ( $obj.is(':visible') ) return $obj.outerHeight();
 				//otherwise, show it to get height, then hide it
@@ -1118,10 +1138,10 @@ var customSalsa = {
 				var height = $obj.outerHeight();
 				$obj.attr("style", oldCSS ? oldCSS : "");
 				return height;
-			};
+			},
 
 			// behaviors for clicking, validation, moving from step to step, etc
-			var attachBehaviors = function() {
+			attachBehaviors : function() {
 				// kill button defaults
 				jQ('#step-box button').on('click', function(e) {
 					e.preventDefault();
@@ -1131,12 +1151,12 @@ var customSalsa = {
 				jQ('.formnav').on('click', function() {
 					var $curStep = jQ(this).closest('.single-step'),
 						$nextStep  = $curStep.next('.single-step'),
-						newHeight  = customSalsa.donation.makeMultistep.getStepHeight( $nextStep ),
+						newHeight  = customSalsa.donation.multistep.getStepHeight( $nextStep ),
 						isValid    = customSalsa.donation.validateStep( parseInt( jQ('#step-box').data('currentStep') ) );
 
 					// make sure the current step is valid before doing anything
 					if ( isValid !== true ) {
-						customSalsa.donation.makeMultistep.displayErrors( isValid );
+						customSalsa.donation.multistep.displayErrors( isValid );
 						return;
 					} else {
 						// hide any lingering error messages
@@ -1158,12 +1178,12 @@ var customSalsa = {
 					var $curStep = jQ('.steps > .step' + jQ('#step-box').data('currentStep') ),
 						newStepNum = parseInt( jQ(this).attr('class').slice(-1) ),
 						$newStep   = jQ('.steps > .step' + newStepNum ),
-						newHeight  = customSalsa.donation.makeMultistep.getStepHeight( $newStep ),
+						newHeight  = customSalsa.donation.multistep.getStepHeight( $newStep ),
 						isValid    = customSalsa.donation.validateStep( parseInt( jQ('#step-box').data('currentStep') ) );
 
 					// make sure the current step is valid before doing anything
 					if ( newStepNum > parseInt( jQ('#step-box').data('currentStep') ) && isValid !== true ) {
-						customSalsa.donation.makeMultistep.displayErrors( isValid );
+						customSalsa.donation.multistep.displayErrors( isValid );
 						return;
 					} else {
 						// hide any lingering error messages
@@ -1238,7 +1258,7 @@ var customSalsa = {
 		    		jQ('form.orderform').submit();
 		    	} else {
 		    		//handle our validateForm() error object
-		    		customSalsa.donation.makeMultistep.displayErrors( isValidForm );
+		    		customSalsa.donation.multistep.displayErrors( isValidForm );
 		    	}
 		    });
 
@@ -1246,19 +1266,19 @@ var customSalsa = {
 				jQ(window).on('resize', function() {
 					var $win = jQ(this);
 					jQ('#amountOther').css('width', (jQ('.amounts>.other').width() - jQ('.other>label').outerWidth() - 9) + "px");
-					if ( $win.width() <= text.mobileBreakpoint ) {
+					if ( $win.width() <= customSalsa.donation.multistep.text.mobileBreakpoint ) {
 						jQ('.steps, form.orderform').removeAttr('style');
 					}
 					//if going from mobile stack to multistep
-					else if ( $win.data('currentWidth') <= text.mobileBreakpoint ) {
+					else if ( $win.data('currentWidth') <= customSalsa.donation.multistep.text.mobileBreakpoint ) {
 						setupStep1();
 					}
 					$win.data('currentWidth', $win.width() );
 				}).trigger('resize');
-			};
+			},
 
 			// Output errors specific for the multistep form
-			var displayErrors = function( errorObj ) {
+			displayErrors : function( errorObj ) {
 
 				Q('.alert-error').remove();	//destroy old error stuff
 				window.location.hash = '#error-box';
@@ -1292,13 +1312,9 @@ var customSalsa = {
 				if ( jQ('window').width() <= text.mobileBreakpoint ) {
 					jQ('html, body').animate( { scrollTop: jQ('#error-box').offset().top - 15 }, 400);
 				}
-			};
+			}
 
-			this.initForm();
-			this.attachBehaviors();
-
-		} // END makeMultistep
-
+		} // END multistep
 
 	}, // END donation
 
