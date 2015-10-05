@@ -1266,7 +1266,7 @@ var customSalsa = {
 
 				var $errorBox = jQ('<div id="error-box" />').addClass('alert alert-error').append('<ul />'),
 					message = 'There are problems with your submission';
-				if ( errorObj.errors && errorObj.errors.length == 1 ) {
+				if ( errorObj.errors && errorObj.errors.length === 1 ) {
 					message = 'There is a problem with your submission';
 				}
 
