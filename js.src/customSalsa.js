@@ -1377,10 +1377,9 @@ var customSalsa = {
 
 };
 
-
 /**
- * Give ourselves a modern version of jQuery if we need it... (defaults to 1.11.2)
+ * Give ourselves a modern version of jQuery if we need it... (defaults to 1.11.3)
  */
-if ( typeof jQ !== 'object' && typeof jQ.fn.jquery !== 'string' ) {
+if ( typeof jQ !== 'object' || typeof jQ.fn.jquery !== 'string' ) {
 	customSalsa.initJQ();
 }
