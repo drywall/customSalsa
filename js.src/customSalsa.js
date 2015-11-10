@@ -116,7 +116,8 @@ var customSalsa = {
 				actionName = 'targetwebformsubmitted';
 			}
 			// trigger the action
-			setTimeout( function() { jQ(document).trigger( actionName ); }, customSalsa.settings.ajaxDelay );
+			// this used to be in a setTimeout call, but that lead to weird async race conditions with actionName
+			jQ(document).trigger( actionName );
 		});
 
 		// If we have a blind action, there's no AJAX
