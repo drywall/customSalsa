@@ -59,7 +59,7 @@ jQ(document).ready(function($) {
 			.css('background', lightbox.bg);
 
 		//set a background for the lightbox element, if specified
-		if (lightbox.bg != "") $lightbox.css('background', lightbox.bg);
+		if (lightbox.bg !== "") $lightbox.css('background', lightbox.bg);
 
 		// store the 'recurring redirect' value in the body to facilitate global retrieval
 		$('body').data('recurring_redirect', lightbox.recurring_redirect);
@@ -109,7 +109,7 @@ jQ(document).ready(function($) {
 			if ( lightbox.validate && !validateForm( $(this) )) return false;
 
 			//check if recurring. if so, submit away!
-			if ( $('#recurring').val() == '1' ) {
+			if ( $('#recurring').val() === '1' ) {
 				updateTracking( 'initial-recur', lightbox.tracking  );
 				return true;
 			}
@@ -153,28 +153,30 @@ jQ(document).ready(function($) {
 	function validateForm( context ) {
 
 		var empties = {
-			'input[name="First_Name"]' : "Please enter your first name",
-			'input[name="Last_Name"]' : "Please enter your last name",
-			'input[name="Street"]' : "Please enter your street",
-			'input[name="City"]' : "Please enter your street",
-			'select[name="State"]' : "Please select your state",
-			'input[name="Zip"]' : "Please enter your Zip Code",
-			'input[name="Email"]' : "Please enter your email address",
-			'input[name="cc"]' : "Please enter a credit card number",
+			'input[name="First_Name"]'  : "Please enter your first name",
+			'input[name="Last_Name"]'   : "Please enter your last name",
+			'input[name="Street"]'      : "Please enter your street",
+			'input[name="City"]'        : "Please enter your street",
+			'select[name="State"]'      : "Please select your state",
+			'input[name="Zip"]'         : "Please enter your Zip Code",
+			'input[name="Email"]'       : "Please enter your email address",
+			'input[name="cc"]'          : "Please enter a credit card number",
 			'select[name="ccExpMonth"]' : "Please choose an expiration month",
-			'select[name="ccExpYear"]' : "Please choose an expiration year",
-			'input[name="CVV2"]' : "Please enter your card's security code"
+			'select[name="ccExpYear"]'  : "Please choose an expiration year",
+			'input[name="CVV2"]'        : "Please enter your card's security code"
 		};
 
 		var numbers = {
-			'input[name="cc"]' : "Please enter a numeric credit card number",
-			'input[name="CVV2"]' : "Please enter a numeric security code"
+			'input[name="cc"]'    : "Please enter a numeric credit card number",
+			'input[name="CVV2"]'  : "Please enter a numeric security code"
 		};
 
-		var email_pattern = /^[A-Z0-9._%-\+]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+		var email_pattern        = /^[A-Z0-9._%-\+]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
 			numeric_with_decimal_pattern = /^\d+\.?\d*$/,
 			numeric_strict_pattern = /^\d+$/,
-			false_already = false;
+			false_already          = false,
+			cvv_length             = 3,
+			card_length            = 16;
 
 		$.each(empties, function(element, message) {
 			if ( $.trim( $(element, context).val() ) === '' ) {
@@ -206,19 +208,18 @@ jQ(document).ready(function($) {
 
 		//TO DO: check card # length and CVV length
 		//check card field length
-		if ( $('input[name="cc_type"]:checked').val() == 'american express' ) {
-			var cvv_length = 4, card_length = 15;
-		} else {
-			var cvv_length = 3, card_length = 16;
+		if ( $('input[name="cc_type"]:checked').val() === 'american express' ) {
+			cvv_length = 4;
+			card_length = 15;
 		}
 
-		if ( $('input[name="cc"]').val().length != card_length ) {
+		if ( $('input[name="cc"]').val().length !== card_length ) {
 			alert('Please enter a ' + card_length +'-digit card number');
 			$('input[name="cc"]', context).focus();
 			return false;
 		}
 
-		if ( $('input[name="CVV2"]').val().length != cvv_length ) {
+		if ( $('input[name="CVV2"]').val().length !== cvv_length ) {
 			alert('Please enter a ' + cvv_length +'-digit security code');
 			$('input[name="CVV2"]', context).focus();
 			return false;
@@ -252,29 +253,29 @@ jQ(document).ready(function($) {
 				if ($('body').data('recurring_redirect') !== '') $('input[name="redirect"]').val( $('body').data('recurring_redirect') );
 				break;
 			case "open":          // lightbox was presented to the user
-				if ( typeof _gaq != 'undefined' ) _gaq.push(['_trackEvent', 'Donations', 'Lightbox Open', form_id]);
-				if ( typeof ga == 'function' ) ga('send', 'event', 'Donations', 'Lightbox Open', form_id);
+				if ( typeof _gaq !== 'undefined' ) _gaq.push(['_trackEvent', 'Donations', 'Lightbox Open', form_id]);
+				if ( typeof ga === 'function' ) ga('send', 'event', 'Donations', 'Lightbox Open', form_id);
 				$tracker.val( 'recurring_lightbox_open' ).attr('name', 'Donation_Tracking_Code');	//should never go into Salsa
 				break;
 			case "closed":        // user used lightbox 'close' button and then proceeded to submit form
-				if ( typeof _gaq != 'undefined' ) _gaq.push(['_trackEvent', 'Donations', 'Lightbox Closed', form_id]);
-				if ( typeof ga == 'function' ) ga('send', 'event', 'Donations', 'Lightbox Closed', form_id);
+				if ( typeof _gaq !== 'undefined' ) _gaq.push(['_trackEvent', 'Donations', 'Lightbox Closed', form_id]);
+				if ( typeof ga === 'function' ) ga('send', 'event', 'Donations', 'Lightbox Closed', form_id);
 				$tracker.val( 'recurring_lightbox_closed' ).attr('name', 'Donation_Tracking_Code');	//will only go into Salsa if user closes lightbox and then submits
 				break;
 			case "large":         // user's gift amount excedded the lightbox max and thus no lightbox was triggered
-				if ( typeof _gaq != 'undefined' ) _gaq.push(['_trackEvent', 'Donations', 'Lightbox Bypassed (Large Gift)', form_id]);
-				if ( typeof ga == 'function' ) ga('send', 'event', 'Donations', 'Lightbox Bypassed (Large Gift)', form_id);
+				if ( typeof _gaq !== 'undefined' ) _gaq.push(['_trackEvent', 'Donations', 'Lightbox Bypassed (Large Gift)', form_id]);
+				if ( typeof ga === 'function' ) ga('send', 'event', 'Donations', 'Lightbox Bypassed (Large Gift)', form_id);
 				$tracker.val( 'recurring_lightbox_bypassed_large' ).attr('name', 'Donation_Tracking_Code');	//will only go into Salsa if user's initial gift is >=max
 				break;
 			case "yes":           // user was presented with the lightbox and agreed to give monthly
-				if ( typeof _gaq != 'undefined' ) _gaq.push(['_trackEvent', 'Donations', 'Lightbox Yes', form_id]);
-				if ( typeof ga == 'function' ) ga('send', 'event', 'Donations', 'Lightbox Yes', form_id);
+				if ( typeof _gaq !== 'undefined' ) _gaq.push(['_trackEvent', 'Donations', 'Lightbox Yes', form_id]);
+				if ( typeof ga === 'function' ) ga('send', 'event', 'Donations', 'Lightbox Yes', form_id);
 				$tracker.val( 'recurring_lightbox_yes' ).attr('name', 'Note');
 				if ($('body').data('recurring_redirect') !== '') $('input[name="redirect"]').val( $('body').data('recurring_redirect') );
 				break;
 			case "no":            // user was presented the lightbox but chose to give a one-time gift
-				if ( typeof _gaq != 'undefined' ) _gaq.push(['_trackEvent', 'Donations', 'Lightbox No', form_id]);
-				if ( typeof ga == 'function' ) ga('send', 'event', 'Donations', 'Lightbox No', form_id);
+				if ( typeof _gaq !== 'undefined' ) _gaq.push(['_trackEvent', 'Donations', 'Lightbox No', form_id]);
+				if ( typeof ga === 'function' ) ga('send', 'event', 'Donations', 'Lightbox No', form_id);
 				$tracker.val( 'recurring_lightbox_no' ).attr('name', 'Donation_Tracking_Code');
 				break;
 		}

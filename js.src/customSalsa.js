@@ -295,7 +295,7 @@ var customSalsa = {
 		//smarter markup for required fields (maybe make smarter by using input name=required value?)
 		jQ("span.required").parent('label').next('input, select').attr('required','required');
 
-		//labels class-ify their parents
+		//labels class-ify their parent
 		$('label').each( function() {
 			var $self = $(this),
 				label_text = $self.text().trim().replace(/[^a-z0-9]+/gi, '-').toLowerCase();
