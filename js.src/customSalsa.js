@@ -24,7 +24,7 @@ var customSalsa = {
 				'/action3'              : 'action',
 				'/viewCart.jsp'         : 'shop-cart',
 				'/item.jsp'             : 'shop-item',
-				'/checkOut.jsp'         : 'shop-checkout'
+				'/checkOut.jsp'         : 'shop-checkout',
 				'/donation/'            : 'donate'
 			},
 		activeLabelSelector: 'input[type="radio"]',
@@ -288,11 +288,20 @@ var customSalsa = {
 	 * Misc CSS helper classes and such
 	 */
 	addCSSHelpers : function() {
-	  jQ("#CVV2").parents('.formRow').addClass('cvv-field');
-	  jQ("#ccExpMonth").parents('.formRow').addClass('expires-field');
 
-	  //smarter markup for required fields (maybe make smarter by using input name=required value?)
-	  jQ("span.required").parent('label').next('input, select').attr('required','required');
+		jQ("#CVV2").parents('.formRow').addClass('cvv-field');
+		jQ("#ccExpMonth").parents('.formRow').addClass('expires-field');
+
+		//smarter markup for required fields (maybe make smarter by using input name=required value?)
+		jQ("span.required").parent('label').next('input, select').attr('required','required');
+
+		//labels class-ify their parents
+		$('label').each( function() {
+			var $self = $(this),
+				label_text = $self.text().trim().replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+			$self.parent().addClass( label_text );
+		});
+
 	}, // END addCSSHelpers
 
 	/**
@@ -1267,7 +1276,7 @@ var customSalsa = {
 
 				var $errorBox = jQ('<div id="error-box" />').addClass('alert alert-error').append('<ul />'),
 					message = 'There are problems with your submission';
-				if ( errorObj.errors && errorObj.errors.length == 1 ) {
+				if ( errorObj.errors && errorObj.errors.length === 1 ) {
 					message = 'There is a problem with your submission';
 				}
 
