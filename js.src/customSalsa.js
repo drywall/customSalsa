@@ -116,6 +116,8 @@ var customSalsa = {
 				actionName = 'targetwebformsubmitted';
 			}
 			// trigger the action
+			// we used to do with with a small setTimout delay for reasons unknown
+			// now doing immediately instead
 			// this used to be in a setTimeout call, but that lead to weird async race conditions with actionName
 			jQ(document).trigger( actionName );
 		});
@@ -296,7 +298,7 @@ var customSalsa = {
 		jQ("span.required").parent('label').next('input, select').attr('required','required');
 
 		//labels class-ify their parent
-		$('label').each( function() {
+		jQ('label').each( function() {
 			var $self = $(this),
 				label_text = $self.text().trim().replace(/[^a-z0-9]+/gi, '-').toLowerCase();
 			$self.parent().addClass( label_text );
@@ -1388,6 +1390,6 @@ var customSalsa = {
 /**
  * Give ourselves a modern version of jQuery if we need it... (defaults to 1.11.2)
  */
-if ( typeof jQ !== 'object' && typeof jQ.fn.jquery !== 'string' ) {
+if ( typeof jQ !== 'object' || typeof jQ.fn == 'undefined' || (typeof jQ.fn !== 'undefined' && typeof jQ.fn.jquery !== 'string') ) {
 	customSalsa.initJQ();
 }
