@@ -298,11 +298,11 @@ var customSalsa = {
 		jQ("span.required").parent('label').next('input, select').attr('required','required');
 
 		//labels class-ify their parent
+		//remove all characters except for alphanumeric characters and spaces (used for the asterisk "required" fields, then replace spaces with hyphens 
 		jQ('label').each( function() {
 			var $self = $(this),
-				label_text = $self.text().trim().replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+				label_text = $self.text().trim().replace(/[^a-z0-9\s]+/gi, '').replace(/\s+/g, '-').toLowerCase();
 			$self.parent().addClass( label_text );
-		});
 
 	}, // END addCSSHelpers
 
